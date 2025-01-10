@@ -41,13 +41,14 @@ function Item({ itemObj }) {
         <p>{itemObj.icon}</p>
         <p>{itemObj.name}</p>
         <p>{itemObj.price}</p>
+        <Button>Add to Cart</Button>
       </li>
     </div>
   );
 }
 
-function Button({ children }) {
-  <button>{children}</button>;
+function Button({ children, onClick }) {
+  return <button>{children}</button>;
 }
 
 // function ShoppingPage() {}

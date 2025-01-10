@@ -3,5 +3,5 @@ body {
 }
 
 button {
-  border: red solid 2px;
+  border-radius: 20px;
 }
