@@ -2,6 +2,27 @@ body {
   background-color: grey;
 }
 
+.main {
+  display: flex;
+  flex-direction: row;
+}
+
+.merch {
+  width: 75%;
+  border: 1px solid red;
+  margin-right: 10px;
+}
+
+.cart {
+  width: 25%;
+  padding: 5px;
+  background: darkgrey;
+}
+
 button {
   border-radius: 20px;
+}
+
+button:click {
+  background-color: white;
 }
