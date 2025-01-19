@@ -26,3 +26,16 @@ button {
 button:click {
   background-color: white;
 }
+
+.item {
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  border: solid red 1px;
+}
+
+#inline {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}

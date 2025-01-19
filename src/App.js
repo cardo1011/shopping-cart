@@ -27,23 +27,49 @@ let itemsForSale = [
 
 export default function App() {
   const [itemsInCart, setItemsInCart] = useState([]);
+  const [quantity, setQuantity] = useState(1);
 
   function addToCart(curItem) {
-    // taking the current item and appending it to a copy of itemsInCart to keep track of what items are in the cart
-    setItemsInCart((itemsInCart) => [...itemsInCart, curItem]);
-    //incremements the quantity of the item added to the cart by one
-    curItem.quantity += 1;
+    // Check if the item already exists in the cart
+    const itemFound = itemsInCart.find((item) => item.id === curItem.id);
+
+    if (itemFound) {
+      // If the item exists, create a new array with a copy of the item and updated item's quantity
+      const updatedItemsInCart = itemsInCart.map(
+        (item) =>
+          item.id === curItem.id
+            ? { ...item, quantity: item.quantity + 1 } // Create a new object with updated quantity
+            : item // Leave other items unchanged
+      );
+      setItemsInCart(updatedItemsInCart); // Update the state with the new array
+    } else {
+      // If the item doesn't exist, add it to the cart
+      setItemsInCart((itemsInCart) => [
+        ...itemsInCart,
+        { ...curItem, quantity: 1 },
+      ]);
+    }
   }
+
+  function deductItemQuantity(curItem) {}
 
   return (
     <div className="main">
-      <Merchandise onAddToCart={addToCart} />
-      <Cart onAddToCart={addToCart} itemsInCart={itemsInCart} />
+      <Merchandise
+        onAddToCart={addToCart}
+        quantity={quantity}
+        setQuantity={setQuantity}
+      />
+      <Cart
+        onAddToCart={addToCart}
+        itemsInCart={itemsInCart}
+        onDeductItemQuantity={deductItemQuantity}
+      />
     </div>
   );
 }
 
-function Merchandise({ onAddToCart }) {
+function Merchandise({ onAddToCart, quantity, setQuantity }) {
   const items = itemsForSale;
   const itemsQuantity = itemsForSale.length;
   return (
@@ -58,6 +84,8 @@ function Merchandise({ onAddToCart }) {
               key={item.id}
               onAddToCart={onAddToCart}
               context="merchandise"
+              quantity={quantity}
+              setQuantity={setQuantity}
             />
           ))}
         </ul>
@@ -68,8 +96,13 @@ function Merchandise({ onAddToCart }) {
   );
 }
 
-function Item({ itemObj, onAddToCart, context }) {
-  const [quantity, setQuantity] = useState(1);
+function Item({
+  itemObj,
+  onAddToCart,
+  context,
+  setQuantity,
+  onDeductItemQuantity,
+}) {
   return (
     <div className="item">
       {context === "merchandise" ? (
@@ -80,16 +113,20 @@ function Item({ itemObj, onAddToCart, context }) {
           <Button onClick={() => onAddToCart(itemObj)}>Add to Cart</Button>
         </li>
       ) : (
-        <li>
+        <li id="in-cart-items">
           <p>{itemObj.icon}</p>
           <p>{itemObj.name}</p>
           <p>{itemObj.price}</p>
           {/* remove the item if quantity === 0 */}
-          <input
-            type="Number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-          />
+          <div id="inline">
+            <Button>-</Button>
+            <input
+              type="Number"
+              value={itemObj.quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+            <Button>+</Button>
+          </div>
         </li>
       )}
     </div>
@@ -102,7 +139,7 @@ function Button({ children, onClick }) {
 
 // function ShoppingPage() {}
 
-function Cart({ itemsInCart, onAddToCart }) {
+function Cart({ itemsInCart, onAddToCart, onDeductItemQuantity }) {
   return (
     <div className="cart">
       <h2>Cart</h2>
@@ -113,6 +150,7 @@ function Cart({ itemsInCart, onAddToCart }) {
             key={item.id}
             onAddToCart={onAddToCart}
             context="cart"
+            onDeductItemQuantity={onDeductItemQuantity}
           />
         ))}
       </ul>
